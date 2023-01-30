@@ -1,0 +1,10 @@
+pywinauto
+psutil
+rich
+openpyxl
+pywin32
+requests
+pandas
+pyxlsb
+tqdm
+python-dotenv
