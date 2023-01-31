@@ -1,6 +1,6 @@
 import datetime
 from time import sleep
-from typing import List, Dict
+from typing import List
 import psutil
 from pywinauto import Desktop, Application, WindowSpecification
 from pywinauto.application import TimeoutError as AppTimeoutError

@@ -1,24 +1,20 @@
 import os
 import pathlib
-from dataclasses import dataclass
-from time import sleep
-from typing import List
+import platform
 import shutil
-import psutil
-import pywinauto
-import requests
-import win32com.client as win32
-from pywinauto import Application
-from pywinauto.timings import TimeoutError
-from pywinauto.application import ProcessNotFoundError
-from pywinauto.controls.hwndwrapper import InvalidWindowHandle
+from dataclasses import dataclass
+from typing import List
 import openpyxl
+import psutil
+import win32com.client as win32
 from openpyxl.workbook.workbook import Workbook
 from openpyxl.worksheet.worksheet import Worksheet
+from pywinauto import Application
+from pywinauto.application import ProcessNotFoundError
+from pywinauto.controls.hwndwrapper import InvalidWindowHandle
+from bot_notification import TelegramNotifier
 from colvir import Colvir
 from data_structures import BranchInfo, Credentials, Process
-from bot_notification import TelegramNotifier
-import platform
 
 
 @dataclass

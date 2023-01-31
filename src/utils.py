@@ -1,14 +1,13 @@
-import psutil
-from psutil import Process
-import pywinauto
-from pywinauto.base_wrapper import ElementNotEnabled
-import win32com.client as win32
-from typing import List, Dict
 import re
 from itertools import islice
-from excel_converter import ExcelConverter
 from time import sleep
-from datetime import datetime as dt
+from typing import List, Dict
+import psutil
+import pywinauto
+import win32com.client as win32
+from psutil import Process
+from pywinauto.base_wrapper import ElementNotEnabled
+from excel_converter import ExcelConverter
 
 
 class BackendManager:

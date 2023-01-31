@@ -1,21 +1,18 @@
 import datetime
 import os
+import platform
 import warnings
 from dataclasses import fields
 from typing import List
+import dotenv
 import pandas
 import psutil
+import requests
 from pandas.core.frame import DataFrame
+from bot_notification import TelegramNotifier
 from data_extractor import DataGetter
 from data_structures import Credentials, Process, BranchInfo
 from robot import Robot
-import win32com.client as win32
-from tqdm import tqdm
-from bot_notification import TelegramNotifier
-import dotenv
-import requests
-import platform
-import pywinauto
 
 
 def sort_list(data: List[BranchInfo]) -> List[BranchInfo]:

@@ -1,8 +1,8 @@
 import datetime
+import os
+import platform
 from dataclasses import dataclass
 from typing import Dict
-import platform
-import os
 
 
 @dataclass
