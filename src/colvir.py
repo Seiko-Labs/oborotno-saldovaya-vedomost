@@ -1,10 +1,8 @@
 import datetime
-import os
 from time import sleep
 from typing import List, Dict
 import psutil
 from pywinauto import Desktop, Application, WindowSpecification
-from pywinauto.application import ProcessNotFoundError
 from pywinauto.application import TimeoutError as AppTimeoutError
 from pywinauto.base_wrapper import ElementNotEnabled, ElementNotVisible, InvalidElement
 from pywinauto.controls.hwndwrapper import DialogWrapper
@@ -140,36 +138,18 @@ class Colvir:
             raise ElementNotFoundError
 
     def confirm_warning(self) -> None:
-        # found = False
-        # for window in self.app.windows():
-        #     if found:
-        #         break
-        #     if window.window_text() != 'Colvir Banking System':
-        #         continue
-        #     win = self.app.window(handle=window.handle)
-        #     for child in win.descendants():
-        #         if child.window_text() == 'OK':
-        #             child.backend.name = 'uia'
-        #             child.click()
-        #             child.backend.name = 'win32'
-        #             # child.type_keys('{ENTER}')
-        #             found = True
-        #             sleep(1)
-        #             break
-
-        self.app.backend.name = 'uia'
-        self.app.Dialog.wait(wait_for='exists', timeout=60)
-        if self.app.Dialog.window_text() == 'Произошла ошибка':
+        try:
+            self.app.backend.name = 'uia'
+            self.app.Dialog.wait(wait_for='exists', timeout=60)
+            self.app.Dialog['OK'].click()
+        except (MatchError, ElementNotFoundError):
+            self.app.backend.name = 'win32'
             self.retry()
             return
-        self.app.Dialog['OK'].click()
         self.app.backend.name = 'win32'
-        # win: WindowSpecification = self.app.window(title='Colvir Banking System', found_index=0)
-        # win['OK'].wrapper_object().click()
 
     def choose_mode(self) -> None:
         mode_win: WindowSpecification = self.app.window(title='Выбор режима')
-        # mode_win.wait(wait_for='exists', timeout=20)
         mode_win['Edit2'].wrapper_object().set_text(text=self.branch_info.mode)
         mode_win['Edit2'].wrapper_object().send_keystrokes(keystrokes='{ENTER}')
         print('successfully logged in')
