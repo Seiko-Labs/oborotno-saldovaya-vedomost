@@ -62,7 +62,7 @@ class Colvir:
             return
         try:
             self.run_action()
-        except (ElementNotFoundError, TimeoutError, ElementNotEnabled, ElementAmbiguousError,
+        except (ElementNotFoundError, TimingsTimeoutError, ElementNotEnabled, ElementAmbiguousError,
                 ElementNotVisible, InvalidElement, WindowAmbiguousError, WindowNotFoundError,
                 TimingsTimeoutError, MatchError, AppTimeoutError):
             self.retry()
