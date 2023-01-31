@@ -45,7 +45,7 @@ class Robot:
 
         self.kill_colvirs()
 
-        self.chunk_number: int = 5
+        self.chunk_number: int = 10
         self.chunks: List[List[BranchInfo]] = [self.data[i:i + self.chunk_number] for i in
                                                range(0, len(self.data), self.chunk_number)]
         self.done_files: List[str] = []
