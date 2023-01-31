@@ -1,6 +1,8 @@
 import datetime
 from dataclasses import dataclass
 from typing import Dict
+import platform
+import os
 
 
 @dataclass
@@ -139,11 +141,10 @@ class BranchInfo:
             self.save_path += rf'\Книга регистрации счетов за {self.get_quarter(date_start)} квартал {date_start.year}'
             self.file_name = f'{self.branch}_{self.get_quarter(date_start)} кв {date_start.year}.xls'
 
-        self.save_path = self.save_path.replace('31.12.2022', '30.12.2022')
-        self.file_name = self.file_name.replace('31.12.2022', '30.12.2022')
-
         self.final_name = self.file_name.replace('xls', 'xlsb')
         self.final_save_path = self.get_final_save_path(save_path=self.save_path, action=self.action)
+        if platform.node() == 'robot-7':
+            self.save_path = self.save_path.replace(r'C:\xls', r'\\robot-7\c$\2txls')
 
     @staticmethod
     def get_final_save_path(save_path, action):
@@ -156,4 +157,4 @@ class BranchInfo:
             'S_CLI_014': r'finished_reports\УВГК_Книга регистрации\Книга регистрации\Книга регистрации лицевых счетов'
         }
 
-        return save_path.replace(rf'xls\{action.lower()}', save_paths[action])
+        return save_path.replace(rf'xls\{action.lower()}', save_paths[action] if platform.node() == 'robot-7' else os.path.join(r'\\robot-7\c$', save_paths[action]))
