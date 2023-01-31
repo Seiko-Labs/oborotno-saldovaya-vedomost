@@ -18,6 +18,7 @@ from openpyxl.worksheet.worksheet import Worksheet
 from colvir import Colvir
 from data_structures import BranchInfo, Credentials, Process
 from bot_notification import TelegramNotifier
+import platform
 
 
 @dataclass
@@ -78,7 +79,7 @@ class Robot:
 
     def close_sessions(self) -> None:
         files_info: List[FilesInfo] = []
-        for path, subdirs, files in os.walk(rf'C:\xls'):
+        for path, subdirs, files in os.walk(r'C:\xls' if platform.node() == 'robot-7' else r'\\robot-7\c$\2txls'):
             for name in files:
                 if name in self.done_files or 'xlsx' in name:
                     continue
