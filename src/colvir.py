@@ -38,6 +38,15 @@ class Colvir:
 
         self.utils = Utils()
 
+    def get_current_pid(self) -> int:
+        res: int or None = None
+        for proc in psutil.process_iter():
+            if self.process_name in proc.name() \
+                    and proc.pid not in self.pids \
+                    and proc.pid not in self.restricted_pids:
+                res = proc.pid
+        return res
+
     def open(self) -> None:
         try:
             Application(backend='win32').start(cmd_line=self.process_path)
@@ -45,35 +54,53 @@ class Colvir:
         except (ElementNotFoundError, TimingsTimeoutError) as e:
             self.retry()
             return
+        self.pid: int = self.get_current_pid()
+        self.app: Application = Application(backend='win32').connect(process=self.pid)
+        self.confirm_warning()
         try:
-            self.pid: int = self.utils.get_current_process_pid(proc_name='COLVIR')
-            self.app: Application = Application(backend='win32').connect(process=self.pid)
-            try:
-                if self.app.Dialog.window_text() == 'Произошла ошибка':
-                    self.retry()
-                    return
-            except MatchError:
-                pass
-        except ProcessNotFoundError:
-            sleep(1)
-            self.pid: int = self.utils.get_current_process_pid(proc_name='COLVIR')
-            self.app: Application = Application(backend='win32').connect(process=self.pid)
-        sleep(1)
-        try:
-            self.confirm_warning()
-            sleep(1)
             self.choose_mode()
-        except (ElementNotFoundError, MatchError):
+        except ElementNotFoundError:
             self.retry()
             return
         try:
             self.run_action()
-            print(self.pid)
         except (ElementNotFoundError, TimeoutError, ElementNotEnabled, ElementAmbiguousError,
                 ElementNotVisible, InvalidElement, WindowAmbiguousError, WindowNotFoundError,
                 TimingsTimeoutError, MatchError, AppTimeoutError):
             self.retry()
             return
+        print(self.pid)
+        # sleep(1)
+
+        # try:
+        #     Application(backend='win32').start(cmd_line=self.process_path)
+        #     self.login()
+        # except (ElementNotFoundError, TimingsTimeoutError) as e:
+        #     self.retry()
+        #     return
+        # try:
+        #     self.pid: int = self.get_current_pid()
+        #     self.app: Application = Application(backend='win32').connect(process=self.pid)
+        # except ProcessNotFoundError:
+        #     sleep(1)
+        #     self.pid: int = self.get_current_pid()
+        #     self.app: Application = Application(backend='win32').connect(process=self.pid)
+        # sleep(1)
+        # try:
+        #     self.confirm_warning()
+        #     sleep(1)
+        #     self.choose_mode()
+        # except (ElementNotFoundError, MatchError):
+        #     self.retry()
+        #     return
+        # try:
+        #     self.run_action()
+        #     print(self.pid)
+        # except (ElementNotFoundError, TimeoutError, ElementNotEnabled, ElementAmbiguousError,
+        #         ElementNotVisible, InvalidElement, WindowAmbiguousError, WindowNotFoundError,
+        #         TimingsTimeoutError, MatchError, AppTimeoutError):
+        #     self.retry()
+        #     return
 
     def run_action(self) -> None:
         mode = self.branch_info.mode
@@ -82,11 +109,13 @@ class Colvir:
         filter_win: WindowSpecification = self.app.window(title='Фильтр')
         filter_win.wait(wait_for='exists', timeout=60)
         if mode == 'DD7':
-            filter_win['Edit6'].wrapper_object().set_text(text='01')
-            filter_win['Edit10'].wrapper_object().set_text(text='1005')
+            filter_win['Edit6'].wrapper_object().set_text(text='0114')
+            # filter_win['Edit10'].wrapper_object().set_text(text='1005')
         elif mode == 'MCLIEN':
             filter_win['Edit2'].wrapper_object().set_text(text='720914400947')
         filter_win['OKButton'].wrapper_object().click()
+
+        sleep(1)
 
         title: str = 'Субсчета ПС и лицевые счета клиентов' if mode == 'DD7' else 'Картотека физических и юридических лиц '
         main_win: WindowSpecification = self.app.window(title=title, found_index=0)
@@ -109,12 +138,9 @@ class Colvir:
             settings_win['Edit6'].wrapper_object().set_text(text=self.branch_info.branch)
             sleep(.1)
             if action in ['Z_160_GL_020', 'Z_160_GL_003']:
-                edit_num: int = 5  # Z_160_GL_003
-
+                edit_num: int = 5
                 if action == 'Z_160_GL_020':
                     edit_num = 10 if (self.branch_info.branch != '00' or ',' not in self.branch_info.account) else 18
-
-                # edit_num: int = 5 if action == 'Z_160_GL_003' else 18 if self.branch_info.branch == '00' else 10
                 settings_win[f'Edit{edit_num}'].wrapper_object().set_text(text=self.branch_info.account)
                 sleep(.1)
                 settings_win['СводныйCheckBox'].wrapper_object().click()
@@ -146,17 +172,36 @@ class Colvir:
             raise ElementNotFoundError
 
     def confirm_warning(self) -> None:
-        for window in self.app.windows():
-            if window.window_text() != 'Colvir Banking System':
-                continue
-            win = self.app.window(handle=window.handle)
-            for child in win.descendants():
-                if child.window_text() == 'OK':
-                    child.send_keystrokes('{ENTER}')
-                    break
+        # found = False
+        # for window in self.app.windows():
+        #     if found:
+        #         break
+        #     if window.window_text() != 'Colvir Banking System':
+        #         continue
+        #     win = self.app.window(handle=window.handle)
+        #     for child in win.descendants():
+        #         if child.window_text() == 'OK':
+        #             child.backend.name = 'uia'
+        #             child.click()
+        #             child.backend.name = 'win32'
+        #             # child.type_keys('{ENTER}')
+        #             found = True
+        #             sleep(1)
+        #             break
+
+        self.app.backend.name = 'uia'
+        self.app.Dialog.wait(wait_for='exists', timeout=60)
+        if self.app.Dialog.window_text() == 'Произошла ошибка':
+            self.retry()
+            return
+        self.app.Dialog['OK'].click()
+        self.app.backend.name = 'win32'
+        # win: WindowSpecification = self.app.window(title='Colvir Banking System', found_index=0)
+        # win['OK'].wrapper_object().click()
 
     def choose_mode(self) -> None:
         mode_win: WindowSpecification = self.app.window(title='Выбор режима')
+        # mode_win.wait(wait_for='exists', timeout=20)
         mode_win['Edit2'].wrapper_object().set_text(text=self.branch_info.mode)
         mode_win['Edit2'].wrapper_object().send_keystrokes(keystrokes='{ENTER}')
         print('successfully logged in')
@@ -199,7 +244,7 @@ class Colvir:
             p: psutil.Process = psutil.Process(pid=self.pid)
             p.terminate()
         except psutil.NoSuchProcess:
-            self.pid: int = self.utils.get_current_process_pid(proc_name='COLVIR')
+            self.pid: int = self.get_current_pid()
             p: psutil.Process = psutil.Process(self.pid)
             p.terminate()
         sleep(.5)
