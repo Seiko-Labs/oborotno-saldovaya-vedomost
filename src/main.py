@@ -106,7 +106,6 @@ def kill_colvirs() -> None:
 
 
 def main() -> None:
-    # pywinauto.timings.Timings.slow()
     warnings.simplefilter(action='ignore', category=UserWarning)
     dotenv.load_dotenv()
 
@@ -118,10 +117,6 @@ def main() -> None:
 
     data.sort(key=lambda x: ['Z_160_GL_003', 'Z_160_GL_020', 'S_CLI_003', 'S_CLI_004', 'S_CLI_013', 'S_CLI_014'].index(x.action))
     data = [b for i, b in enumerate(data) if i % 2 == (0 if platform.node() == 'robot-7' else 1)]
-
-    # data = data[0:50]
-
-    # print_table(data)
 
     with requests.Session() as session:
         args = {
@@ -136,5 +131,4 @@ def main() -> None:
 
 
 if __name__ == '__main__':
-    # kill_colvirs()
     main()
