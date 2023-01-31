@@ -70,37 +70,6 @@ class Colvir:
             self.retry()
             return
         print(self.pid)
-        # sleep(1)
-
-        # try:
-        #     Application(backend='win32').start(cmd_line=self.process_path)
-        #     self.login()
-        # except (ElementNotFoundError, TimingsTimeoutError) as e:
-        #     self.retry()
-        #     return
-        # try:
-        #     self.pid: int = self.get_current_pid()
-        #     self.app: Application = Application(backend='win32').connect(process=self.pid)
-        # except ProcessNotFoundError:
-        #     sleep(1)
-        #     self.pid: int = self.get_current_pid()
-        #     self.app: Application = Application(backend='win32').connect(process=self.pid)
-        # sleep(1)
-        # try:
-        #     self.confirm_warning()
-        #     sleep(1)
-        #     self.choose_mode()
-        # except (ElementNotFoundError, MatchError):
-        #     self.retry()
-        #     return
-        # try:
-        #     self.run_action()
-        #     print(self.pid)
-        # except (ElementNotFoundError, TimeoutError, ElementNotEnabled, ElementAmbiguousError,
-        #         ElementNotVisible, InvalidElement, WindowAmbiguousError, WindowNotFoundError,
-        #         TimingsTimeoutError, MatchError, AppTimeoutError):
-        #     self.retry()
-        #     return
 
     def run_action(self) -> None:
         mode = self.branch_info.mode
@@ -110,7 +79,6 @@ class Colvir:
         filter_win.wait(wait_for='exists', timeout=60)
         if mode == 'DD7':
             filter_win['Edit6'].wrapper_object().set_text(text='0114')
-            # filter_win['Edit10'].wrapper_object().set_text(text='1005')
         elif mode == 'MCLIEN':
             filter_win['Edit2'].wrapper_object().set_text(text='720914400947')
         filter_win['OKButton'].wrapper_object().click()
