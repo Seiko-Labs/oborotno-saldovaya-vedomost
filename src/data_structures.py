@@ -143,7 +143,7 @@ class BranchInfo:
 
         self.final_name = self.file_name.replace('xls', 'xlsb')
         self.final_save_path = self.get_final_save_path(save_path=self.save_path, action=self.action)
-        if platform.node() == 'robot-7':
+        if platform.node() == 'robot-2t':
             self.save_path = self.save_path.replace(r'C:\xls', r'\\robot-7\c$\2txls')
 
     @staticmethod
@@ -157,4 +157,6 @@ class BranchInfo:
             'S_CLI_014': r'finished_reports\УВГК_Книга регистрации\Книга регистрации\Книга регистрации лицевых счетов'
         }
 
-        return save_path.replace(rf'xls\{action.lower()}', save_paths[action] if platform.node() == 'robot-7' else os.path.join(r'\\robot-7\c$', save_paths[action]))
+        if platform.node() == 'robot-7':
+            return save_path.replace(rf'xls\{action.lower()}', save_paths[action])
+        return save_path.replace(rf'C:\xls\{action.lower()}', os.path.join(r'\\robot-7\c$', save_paths[action]))
