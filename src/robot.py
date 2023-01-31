@@ -3,6 +3,7 @@ import pathlib
 import platform
 import shutil
 from dataclasses import dataclass
+from time import sleep
 from typing import List
 import openpyxl
 import psutil
@@ -42,7 +43,7 @@ class Robot:
 
         self.kill_colvirs()
 
-        self.chunk_number: int = 10
+        self.chunk_number: int = 5
         self.chunks: List[List[BranchInfo]] = [self.data[i:i + self.chunk_number] for i in
                                                range(0, len(self.data), self.chunk_number)]
         self.done_files: List[str] = []
@@ -199,29 +200,30 @@ class Robot:
             self.counter = 0
             self.pids_number = len(self.pids)
             self.close_sessions()
+            sleep(30)
         self.pids_number = len(self.pids)
         while self.pids:
             self.close_sessions()
 
-        self.pids = []
-        for i, branch_info in enumerate(self.rejected_data):
-            message = f'{i + 1}/{len(self.rejected_data)} {branch_info}'
-            print(message)
-            colvir: Colvir = Colvir(
-                pids=self.pids,
-                restricted_pids=self.restricted_pids,
-                credentials=self.credentials,
-                process=self.process,
-                data=branch_info,
-            )
-            colvir.open()
-            self.notifier.send_notification(message=f'{i + 1}/{len(self.rejected_data)}')
-            self.pids.append(colvir.pid)
-        print(self.pids)
-        self.notifier.send_notification(message=f'{len(self.pids)} processes are opened, starting to close sessions')
-        self.pids_number = len(self.pids)
-        self.counter = 0
-        while self.pids:
-            self.close_sessions()
+        # self.pids = []
+        # for i, branch_info in enumerate(self.rejected_data):
+        #     message = f'{i + 1}/{len(self.rejected_data)} {branch_info}'
+        #     print(message)
+        #     colvir: Colvir = Colvir(
+        #         pids=self.pids,
+        #         restricted_pids=self.restricted_pids,
+        #         credentials=self.credentials,
+        #         process=self.process,
+        #         data=branch_info,
+        #     )
+        #     colvir.open()
+        #     self.notifier.send_notification(message=f'{i + 1}/{len(self.rejected_data)}')
+        #     self.pids.append(colvir.pid)
+        # print(self.pids)
+        # self.notifier.send_notification(message=f'{len(self.pids)} processes are opened, starting to close sessions')
+        # self.pids_number = len(self.pids)
+        # self.counter = 0
+        # while self.pids:
+        #     self.close_sessions()
         self.notifier.send_notification(message='Completed')
         self.excel.Quit()
