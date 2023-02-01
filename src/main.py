@@ -109,7 +109,7 @@ def main() -> None:
     colvir_usr, colvir_psw = os.getenv(f'COLVIR_USR'), os.getenv(f'COLVIR_PSW')
     process_name, process_path = 'COLVIR', os.getenv('COLVIR_PROCESS_PATH')
 
-    data_getter = DataGetter(_date=datetime.datetime(2023, 2, 1))
+    data_getter = DataGetter()
     data: List[BranchInfo] = data_getter.info
 
     data.sort(key=lambda x: ['Z_160_GL_003', 'Z_160_GL_020', 'S_CLI_003', 'S_CLI_004', 'S_CLI_013', 'S_CLI_014'].index(x.action))
