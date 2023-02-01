@@ -126,6 +126,22 @@ def main() -> None:
         robot: Robot = Robot(**args)
         robot.run()
 
+        full_path_data = [os.path.join(b.final_save_path, b.final_name) for b in data]
+
+        finished_files = []
+        for path, subdirs, names in os.walk(
+                r'\\dbu-upload\c$\Users\bolatova.g\Desktop\январь2023\ДБУ_Для Казначейства\2023 год\январь 2023'):
+            for name in names:
+                full_path = os.path.join(path, name)
+                finished_files.append(full_path)
+
+        _data = [data[i] for i, path in enumerate(full_path_data) if path not in finished_files]
+
+        args['data'] = _data
+
+        robot: Robot = Robot(**args)
+        robot.run()
+
 
 if __name__ == '__main__':
     main()
