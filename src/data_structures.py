@@ -148,15 +148,23 @@ class BranchInfo:
 
     @staticmethod
     def get_final_save_path(save_path, action):
+        # save_paths = {
+        #     'Z_160_GL_020': r'finished_reports\ДБУ_Для Казначейства',
+        #     'Z_160_GL_003': r'finished_reports\ДБУ_Для Казначейства',
+        #     'S_CLI_003': r'finished_reports\УВГК_Книга регистрации\Ведомости\ведомости коррекции карточек клиентов',
+        #     'S_CLI_004': r'finished_reports\УВГК_Книга регистрации\Ведомости\ведомости открытия, закрытия и кор-ии лицевых счетов',
+        #     'S_CLI_013': r'finished_reports\УВГК_Книга регистрации\Книга регистрации\Книга регистрации клиентов',
+        #     'S_CLI_014': r'finished_reports\УВГК_Книга регистрации\Книга регистрации\Книга регистрации лицевых счетов'
+        # }
         save_paths = {
-            'Z_160_GL_020': r'finished_reports\ДБУ_Для Казначейства',
-            'Z_160_GL_003': r'finished_reports\ДБУ_Для Казначейства',
-            'S_CLI_003': r'finished_reports\УВГК_Книга регистрации\Ведомости\ведомости коррекции карточек клиентов',
-            'S_CLI_004': r'finished_reports\УВГК_Книга регистрации\Ведомости\ведомости открытия, закрытия и кор-ии лицевых счетов',
-            'S_CLI_013': r'finished_reports\УВГК_Книга регистрации\Книга регистрации\Книга регистрации клиентов',
-            'S_CLI_014': r'finished_reports\УВГК_Книга регистрации\Книга регистрации\Книга регистрации лицевых счетов'
+            'Z_160_GL_020': r'\\dbu-upload\c$\Users\bolatova.g\Desktop\январь2023\ДБУ_Для Казначейства',
+            'Z_160_GL_003': r'\\dbu-upload\c$\Users\bolatova.g\Desktop\январь2023\ДБУ_Для Казначейства',
+            'S_CLI_003': r'\\dbu-upload\c$\Users\bolatova.g\Desktop\январь2023\УВГК_Книга регистрации\Ведомости\ведомости коррекции карточек клиентов',
+            'S_CLI_004': r'\\dbu-upload\c$\Users\bolatova.g\Desktop\январь2023\УВГК_Книга регистрации\Ведомости\ведомости открытия, закрытия и кор-ии лицевых счетов',
+            'S_CLI_013': r'\\dbu-upload\c$\Users\bolatova.g\Desktop\январь2023\УВГК_Книга регистрации\Книга регистрации\Книга регистрации клиентов',
+            'S_CLI_014': r'\\dbu-upload\c$\Users\bolatova.g\Desktop\январь2023\УВГК_Книга регистрации\Книга регистрации\Книга регистрации лицевых счетов'
         }
 
-        if platform.node() == 'robot-7':
-            return save_path.replace(rf'xls\{action.lower()}', save_paths[action])
-        return save_path.replace(rf'C:\xls\{action.lower()}', os.path.join(r'\\robot-7\c$', save_paths[action]))
+        # if platform.node() == 'robot-7':
+        return save_path.replace(rf'C:\xls\{action.lower()}', save_paths[action])
+        # return save_path.replace(rf'C:\xls\{action.lower()}', os.path.join(r'\\robot-7\c$', save_paths[action]))
