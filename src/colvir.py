@@ -54,6 +54,7 @@ class Colvir:
             return
         self.pid: int = self.get_current_pid()
         self.app: Application = Application(backend='win32').connect(process=self.pid)
+        sleep(2)
         self.confirm_warning()
         try:
             self.choose_mode()
@@ -139,14 +140,11 @@ class Colvir:
 
     def confirm_warning(self) -> None:
         try:
-            self.app.backend.name = 'uia'
-            self.app.Dialog.wait(wait_for='exists', timeout=60)
-            self.app.Dialog['OK'].click()
+            dialog = self.app.window(title='Colvir Banking System', found_index=0)
+            dialog['OK'].wrapper_object().click()
         except (MatchError, ElementNotFoundError):
-            self.app.backend.name = 'win32'
             self.retry()
             return
-        self.app.backend.name = 'win32'
 
     def choose_mode(self) -> None:
         mode_win: WindowSpecification = self.app.window(title='Выбор режима')
