@@ -130,7 +130,7 @@ def main() -> None:
 
         finished_files = []
         for path, subdirs, names in os.walk(
-                r'\\dbu-upload\c$\Users\bolatova.g\Desktop\январь2023\ДБУ_Для Казначейства\2023 год\январь 2023'):
+                r'\\dbu-upload\c$\Users\bolatova.g\Desktop\робот январь 2023 02.02.23'):
             for name in names:
                 full_path = os.path.join(path, name)
                 finished_files.append(full_path)
@@ -139,8 +139,9 @@ def main() -> None:
 
         args['data'] = _data
 
-        robot: Robot = Robot(**args)
-        robot.run()
+        if _data:
+            robot = Robot(**args)
+            robot.run()
 
 
 if __name__ == '__main__':
