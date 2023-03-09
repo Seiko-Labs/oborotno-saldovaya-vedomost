@@ -21,6 +21,25 @@ class BackendManager:
         self.app.backend.name = 'win32' if self.backend_name == 'uia' else 'uia'
 
 
+class RobotStatus:
+    IDLE = '0'
+    RUNNING = '1'
+    ERRORED = '2'
+
+
+class RobotStatusManager:
+    def __init__(self) -> None:
+        self.status_file_path = r'C:\Users\robot.ad\Desktop\osv\robot_status.txt'
+
+    def __enter__(self) -> None:
+        with open(file=self.status_file_path, mode='w', encoding='utf-8') as f:
+            f.write(RobotStatus.RUNNING)
+
+    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
+        with open(file=self.status_file_path, mode='w', encoding='utf-8') as f:
+            f.write(RobotStatus.IDLE if not exc_type else RobotStatus.ERRORED)
+
+
 class Utils:
     def __init__(self) -> None:
         self.excel_converter: ExcelConverter = ExcelConverter()

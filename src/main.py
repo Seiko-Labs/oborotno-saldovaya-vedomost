@@ -13,39 +13,7 @@ from bot_notification import TelegramNotifier
 from data_extractor import DataGetter
 from data_structures import Credentials, Process, BranchInfo
 from robot import Robot
-
-
-def sort_list(data: List[BranchInfo]) -> List[BranchInfo]:
-    z_160_gl_020 = []
-    s_cli_003 = []
-    z_160_gl_003 = []
-    s_cli_004 = []
-    s_cli_013 = []
-    s_cli_014 = []
-
-    for i, branch_info in enumerate(data):
-        action = branch_info.action
-        if action == 'Z_160_GL_020':
-            z_160_gl_020.append(branch_info)
-        elif action == 'S_CLI_003':
-            s_cli_003.append(branch_info)
-        elif action == 'Z_160_GL_003':
-            z_160_gl_003.append(branch_info)
-        elif action == 'S_CLI_004':
-            s_cli_004.append(branch_info)
-        elif action == 'S_CLI_013':
-            s_cli_013.append(branch_info)
-        else:
-            s_cli_014.append(branch_info)
-
-    z_160_gl_020.sort(key=lambda x: x.date_diff)
-    s_cli_003.sort(key=lambda x: x.date_diff)
-    z_160_gl_003.sort(key=lambda x: x.date_diff)
-    s_cli_004.sort(key=lambda x: x.date_diff)
-    s_cli_013.sort(key=lambda x: x.date_diff)
-    s_cli_014.sort(key=lambda x: x.date_diff)
-
-    return z_160_gl_020 + s_cli_003 + z_160_gl_003 + s_cli_004 + s_cli_013 + s_cli_014
+from utils import RobotStatusManager
 
 
 def get_left_data(data: List[BranchInfo]) -> List[BranchInfo]:
@@ -109,11 +77,13 @@ def main() -> None:
     colvir_usr, colvir_psw = os.getenv(f'COLVIR_USR'), os.getenv(f'COLVIR_PSW')
     process_name, process_path = 'COLVIR', os.getenv('COLVIR_PROCESS_PATH')
 
-    data_getter = DataGetter()
+    data_getter = DataGetter(_date=datetime.datetime(2023, 3, 1))
     data: List[BranchInfo] = data_getter.info
 
     data.sort(key=lambda x: ['Z_160_GL_003', 'Z_160_GL_020', 'S_CLI_003', 'S_CLI_004', 'S_CLI_013', 'S_CLI_014'].index(x.action))
-    data = [b for i, b in enumerate(data) if i % 2 == (0 if platform.node() == 'robot-7' else 1)]
+    # data = [b for i, b in enumerate(data) if i % 2 == (0 if platform.node() == 'robot-7' else 1)]
+
+    # print_table(data)
 
     with requests.Session() as session:
         args = {
@@ -123,14 +93,14 @@ def main() -> None:
             'data': data
         }
 
-        robot: Robot = Robot(**args)
-        robot.run()
+        # robot: Robot = Robot(**args)
+        # robot.run()
 
         full_path_data = [os.path.join(b.final_save_path, b.final_name) for b in data]
 
         finished_files = []
         for path, subdirs, names in os.walk(
-                r'\\dbu-upload\c$\Users\bolatova.g\Desktop\робот январь 2023 02.02.23'):
+                r'\\dbu-upload\c$\Users\bolatova.g\Desktop\робот февраль 2023'):
             for name in names:
                 full_path = os.path.join(path, name)
                 finished_files.append(full_path)
@@ -145,4 +115,8 @@ def main() -> None:
 
 
 if __name__ == '__main__':
-    main()
+    # main()
+    from time import sleep
+    with RobotStatusManager():
+        sleep(10)
+
